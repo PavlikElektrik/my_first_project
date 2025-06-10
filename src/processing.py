@@ -26,3 +26,4 @@ def sort_by_date(operations, reverse=True):
 
     # Сортируем по ключу
     return sorted(operations, key=parse_date, reverse=reverse)
+#f
