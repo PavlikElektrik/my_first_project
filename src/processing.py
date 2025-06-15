@@ -1,4 +1,7 @@
-def filter_by_state(operations, state='EXECUTED'):
+from typing import Any, Dict, List, Tuple
+
+
+def filter_by_state(operations: List[Dict[str, Any]], state: str = "EXECUTED") -> List[Dict[str, Any]]:
     """
     Фильтрует список банковских операций по значению ключа 'state'.
 
@@ -6,9 +9,10 @@ def filter_by_state(operations, state='EXECUTED'):
     :param state: Значение ключа 'state' для фильтрации (по умолчанию 'EXECUTED').
     :return: Новый список, содержащий только операции с указанным статусом.
     """
-    return [operation for operation in operations if operation.get('state') == state]
+    return [operation for operation in operations if operation.get("state") == state]
 
-def sort_by_date(operations, reverse=True):
+
+def sort_by_date(operations: List[Dict[str, Any]], reverse: bool = True) -> List[Dict[str, Any]]:
     """
     Сортирует список операций по дате ('date').
 
@@ -17,13 +21,10 @@ def sort_by_date(operations, reverse=True):
     :return: Отсортированный список словарей.
     """
 
-    # Извлекаем и парсим дату напрямую из строки в ISO-формате
-    def parse_date(op):
-        date_str = op['date']  # Например: '2019-07-03T18:35:29.512364'
-        date_part = date_str.split('T')[0]  # '2019-07-03'
-        year, month, day = map(int, date_part.split('-'))  # (2019, 7, 3)
+    def parse_date(op: Dict[str, Any]) -> Tuple[int, int, int]:
+        date_str = op["date"]  # Например: '2019-07-03T18:35:29.512364'
+        date_part = date_str.split("T")[0]  # '2019-07-03'
+        year, month, day = map(int, date_part.split("-"))  # (2019, 7, 3)
         return (year, month, day)
 
-    # Сортируем по ключу
     return sorted(operations, key=parse_date, reverse=reverse)
-#f
