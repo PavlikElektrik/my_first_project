@@ -4,30 +4,47 @@ from .masks import get_mask_account, get_mask_card_number
 
 
 def mask_account_card(card_or_account_info: str) -> str:
-    """
-    Возвращает строку с замаскированным номером карты или счёта.
-
-    Если информация начинается с 'Счет', используется маска для счёта (**XXXX).
-    Во всех остальных случаях предполагается номер карты (формат XXXX XX** **** XXXX).
-
-    :param card_or_account_info: Строка с информацией о карте или счёте
-    :return: Строка с замаскированным номером
-    """
+    # Обработка пустой строки
+    if not card_or_account_info:
+        return ""
 
     # Определяем, является ли запись счётом
     if card_or_account_info.startswith("Счет"):
-        # Выделяем номер счёта (все цифры после слова "Счет")
-        account_number = "".join(filter(str.isdigit, card_or_account_info[4:]))
+        # Обработка случая, когда есть только слово "Счет"
+        if len(card_or_account_info) <= 4:  # Только "Счет" без номера
+            return card_or_account_info
+
+        # Выделяем номер счёта
+        rest = card_or_account_info[4:].strip()
+        if not rest:  # Если после "Счет" только пробелы
+            return "Счет **"
+
+        account_number = "".join(filter(str.isdigit, rest))
+        if not account_number:  # Если нет цифр
+            return "Счет **"
+
         masked_number = get_mask_account(account_number)
         return f"Счет {masked_number}"
     else:
-        # Предполагаем, что это карта — выделяем все цифры из строки
+        # Выделяем номер карты
         card_number = "".join(filter(str.isdigit, card_or_account_info))
+
+        # Если номер карты неполный
+        if len(card_number) != 16:
+            return card_or_account_info  # Возвращаем оригинал
+
         masked_number = get_mask_card_number(card_number)
 
-        # Возвращаем маску вместе с названием карты (до цифр)
-        card_name = "".join(ch for ch in card_or_account_info if not ch.isdigit()).strip()
-        return f"{card_name} {masked_number}"
+        # ИЗМЕНЕНИЕ: Сохраняем название карты с пробелами
+        # Находим последнюю нецифровую часть строки перед номером
+        card_name = ""
+        for char in card_or_account_info:
+            if char.isdigit():
+                break
+            card_name += char
+        card_name = card_name.strip()
+
+        return f"{card_name} {masked_number}" if card_name else masked_number
 
 
 def get_date(date_str: str) -> str:
