@@ -71,6 +71,49 @@ operations = [
     {'id': 615064591, 'state': 'CANCELED', 'date': '2018-10-14T08:21:33.419441'}
 ]
 ```
+## Модуль generators
+
+Модуль содержит генераторы для обработки финансовых данных.
+
+### Функции
+
+#### `filter_by_currency(transactions, currency_code)`
+Фильтрует транзакции по валюте.
+- `transactions`: Список транзакций
+- `currency_code`: Код валюты (например, "USD")
+Возвращает генератор транзакций с указанной валютой.
+
+**Пример:**
+```python
+usd_transactions = filter_by_currency(transactions, "USD")
+print(next(usd_transactions))  # Первая USD-транзакция
+transaction_descriptions(transactions)
+Генерирует описания транзакций.
+
+transactions: Список транзакций
+Возвращает генератор описаний.
+
+Пример:
+```
+python
+descriptions = transaction_descriptions(transactions)
+print(next(descriptions))  # Описание первой транзакции
+```
+card_number_generator(start, end)
+Генерирует номера карт в диапазоне.
+
+start: Начальный номер (целое число)
+
+end: Конечный номер (целое число)
+Возвращает генератор отформатированных номеров вида "XXXX XXXX XXXX XXXX".
+```
+for card in card_number_generator(1, 3):
+    print(card)
+# 0000 0000 0000 0001
+# 0000 0000 0000 0002
+# 0000 0000 0000 0003
+```
+
 ## Тестирование
 
 Проект покрыт модульными тестами с использованием `pytest`.
