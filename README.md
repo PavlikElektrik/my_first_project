@@ -113,6 +113,38 @@ for card in card_number_generator(1, 3):
 # 0000 0000 0000 0002
 # 0000 0000 0000 0003
 ```
+## Модуль decorators
+
+### Декоратор `log`
+
+Логирует выполнение функций:
+- Время вызова
+- Имя функции
+- Результат выполнения или ошибку
+- Входные параметры
+
+#### Использование:
+```python
+from src.decorators import log
+
+# Логирование в консоль
+@log()
+def add(a, b):
+    return a + b
+
+# Логирование в файл
+@log(filename="operations.log")
+def divide(a, b):
+    return a / b
+
+### 4. Проверяем линтеры
+
+Запускаем проверки:
+```bash
+flake8 src/decorators.py
+isort src/decorators.py
+mypy src/decorators.py
+
 
 ## Тестирование
 
