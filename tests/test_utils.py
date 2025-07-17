@@ -1,18 +1,35 @@
 import unittest
-from unittest.mock import patch
-from src.utils import load_json_data
+from unittest.mock import patch, mock_open
 import json
+from src.utils import load_json_data
+
 
 class TestJsonLoader(unittest.TestCase):
-    @patch('builtins.open')
-    def test_file_not_found(self, mock_open):
-        mock_open.side_effect = FileNotFoundError
-        result = load_json_data('missing.json')
+
+    @patch("os.path.exists", return_value=True)
+    @patch("builtins.open", new_callable=mock_open, read_data='[{"id": 1}]')
+    def test_success_load(self, mock_file, mock_exists):
+        """Тест успешной загрузки валидного JSON"""
+        result = load_json_data("valid.json")
+        self.assertEqual(result, [{"id": 1}])
+
+    @patch("os.path.exists", return_value=True)
+    @patch("builtins.open", new_callable=mock_open, read_data='{"id": 1}')
+    def test_not_list_data(self, mock_file, mock_exists):
+        """Тест когда JSON не является списком"""
+        result = load_json_data("not_list.json")
         self.assertEqual(result, [])
 
-    @patch('json.load')
-    @patch('builtins.open')
-    def test_invalid_json(self, mock_open, mock_load):
-        mock_load.side_effect = json.JSONDecodeError("Error", "doc", 0)
-        result = load_json_data('invalid.json')
+    @patch("os.path.exists", return_value=True)
+    @patch("builtins.open", side_effect=OSError)
+    def test_os_error(self, mock_file, mock_exists):
+        """Тест обработки OSError"""
+        result = load_json_data("error.json")
+        self.assertEqual(result, [])
+
+    @patch("os.path.exists", return_value=True)
+    @patch("builtins.open", new_callable=mock_open, read_data='')
+    def test_empty_file(self, mock_file, mock_exists):
+        """Тест пустого файла"""
+        result = load_json_data("empty.json")
         self.assertEqual(result, [])
