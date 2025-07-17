@@ -33,3 +33,8 @@ class TestJsonLoader(unittest.TestCase):
         """Тест пустого файла"""
         result = load_json_data("empty.json")
         self.assertEqual(result, [])
+def test_load_real_file():
+    """Тест загрузки реального файла operations.json"""
+    result = load_json_data("data/operations.json")
+    assert isinstance(result, list)
+    assert len(result) > 0
