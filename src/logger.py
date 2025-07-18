@@ -6,7 +6,8 @@ from pathlib import Path
 def setup_logger(name: str) -> logging.Logger:
     """Настройка логгера для модуля"""
     # Создаем папку для логов
-    log_dir = Path("logs")
+    project_root = Path(__file__).parent.parent
+    log_dir = project_root.joinpath('logs')
     log_dir.mkdir(exist_ok=True)
 
     # Создаем логгер

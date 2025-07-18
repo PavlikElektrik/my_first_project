@@ -17,7 +17,6 @@ test = "scripts.run_tests:main"
 
 [tool.poetry.dependencies]
 python = "^3.11"
-pathlib = "^1.0.1"
 
 [tool.poetry.group.dev.dependencies]
 black = "^25.1.0"
