@@ -18,6 +18,8 @@ test = "scripts.run_tests:main"
 [tool.poetry.dependencies]
 python = "^3.11"
 requests = "^2.32.4"
+pandas = "^2.3.1"
+openpyxl = "^3.1.5"
 
 [tool.poetry.group.dev.dependencies]
 black = "^25.1.0"
