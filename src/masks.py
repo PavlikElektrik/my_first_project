@@ -1,3 +1,10 @@
+import logging
+from .logger import setup_logger
+
+# Инициализация логгера
+logger = setup_logger("masks")
+
+
 def get_mask_card_number(card_number: str) -> str:
     """
     Возвращает замаскированный номер банковской карты в формате:
@@ -12,14 +19,24 @@ def get_mask_card_number(card_number: str) -> str:
     Вызывает ошибку:
         ValueError: Если номер карты не состоит из 16 цифр.
     """
-    # Убедимся, что номер карты состоит только из цифр
-    if not card_number.isdigit() or len(card_number) != 16:
-        raise ValueError("Номер карты должен содержать ровно 16 цифр")
+    logger.debug("Начало маскирования номера карты: %s", card_number)
 
-    # Формируем маску: XXXX XX** **** XXXX
-    masked = f"{card_number[:4]} {card_number[4:6]}** **** {card_number[-4:]}"
+    try:
+        # Убедимся, что номер карты состоит только из цифр
+        if not card_number.isdigit() or len(card_number) != 16:
+            error_msg = "Номер карты должен содержать ровно 16 цифр"
+            logger.error("%s: %s", error_msg, card_number)
+            raise ValueError(error_msg)
 
-    return masked
+        # Формируем маску: XXXX XX** **** XXXX
+        masked = f"{card_number[:4]} {card_number[4:6]}** **** {card_number[-4:]}"
+
+        logger.info("Успешно замаскирован номер карты: %s", masked)
+        return masked
+
+    except Exception as e:
+        logger.exception("Ошибка при маскировании карты %s: %s", card_number, str(e))
+        raise
 
 
 def get_mask_account(account_number: str) -> str:
@@ -30,14 +47,24 @@ def get_mask_account(account_number: str) -> str:
     :param account_number: Номер счёта (строка из цифр)
     :return: Маска номера счёта
     """
-    # Проверяем, что номер счёта состоит только из цифр
-    if not account_number.isdigit():
-        raise ValueError("Номер счёта должен содержать только цифры")
+    logger.debug("Начало маскирования номера счета: %s", account_number)
 
-    # Берём последние 4 цифры
-    last_4 = account_number[-4:]
+    try:
+        # Проверяем, что номер счёта состоит только из цифр
+        if not account_number.isdigit():
+            error_msg = "Номер счёта должен содержать только цифры"
+            logger.error("%s: %s", error_msg, account_number)
+            raise ValueError(error_msg)
 
-    # Формируем маску
-    masked = f"**{last_4}"
+        # Берём последние 4 цифры
+        last_4 = account_number[-4:]
 
-    return masked
+        # Формируем маску
+        masked = f"**{last_4}"
+
+        logger.info("Успешно замаскирован номер счета: %s", masked)
+        return masked
+
+    except Exception as e:
+        logger.exception("Ошибка при маскировании счета %s: %s", account_number, str(e))
+        raise
