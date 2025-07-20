@@ -6,7 +6,7 @@ from typing import Dict, Union
 load_dotenv()
 
 
-def convert_transaction_to_rub(transaction: Dict[str, Union[str, Dict]]) -> float:
+def convert_transaction_to_rub(transaction: dict) -> float:
     """
     Конвертирует сумму транзакции в рубли, используя внешний API.
     Использует endpoint 'convert' вместо 'latest' для прямой конвертации.
@@ -22,8 +22,9 @@ def convert_transaction_to_rub(transaction: Dict[str, Union[str, Dict]]) -> floa
         RuntimeError: При ошибках API или отсутствии ключа
     """
     # Извлекаем данные из транзакции
-    amount = transaction['amount']
-    currency = transaction['operationCurrency']['code']
+    operation_amount = transaction['operationAmount']
+    amount = operation_amount['amount']
+    currency = operation_amount['currency']['code']
 
     # Для рублевых транзакций конвертация не нужна
     if currency == 'RUB':
