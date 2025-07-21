@@ -12,7 +12,7 @@ def read_csv_file(file_path: str) -> List[Dict[str, Any]]:
     Returns:
         Список словарей с транзакциями
     """
-    df = pd.read_csv(r'C:\Users\Pavel\Desktop\data', delimiter=';')
+    df = pd.read_csv(file_path, delimiter=';')
     return df.to_dict(orient='records')
 
 
@@ -26,5 +26,5 @@ def read_excel_file(file_path: str) -> List[Dict[str, Any]]:
     Returns:
         Список словарей с транзакциями
     """
-    df = pd.read_excel(r'C:\Users\Pavel\Desktop\data', engine='openpyxl')
+    df = pd.read_excel(file_path, engine='openpyxl')
     return df.to_dict(orient='records')
