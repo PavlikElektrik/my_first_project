@@ -1,4 +1,3 @@
-import logging
 from .logger import setup_logger
 
 # Инициализация логгера
