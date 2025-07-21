@@ -1,6 +1,7 @@
 # generators.py
 from typing import Any, Dict, Iterator, List
 
+
 def filter_by_currency(transactions: List[Dict[str, Any]], currency_code: str) -> Iterator[Dict[str, Any]]:
     """Генератор для фильтрации транзакций по валюте"""
     for transaction in transactions:
