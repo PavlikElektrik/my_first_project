@@ -1,6 +1,6 @@
 # tests/test_decorators.py
-import os
 import pytest
+
 from src.decorators import log
 
 
