@@ -1,8 +1,7 @@
 # src/main.py
-import sys
 from typing import Any, Dict, List
 
-from decorators import log
+from src.decorators import log
 
 # Чтение файлов
 from src.file_reader import read_csv_file, read_excel_file
@@ -52,22 +51,41 @@ def main() -> None:
     Логи записываются в logs/main.log.
     """
     logger = setup_logger("main")
+    print("Добро пожаловать в приложение для обработки банковских транзакций.")
+    print("Выберите формат файла, который вы хотите обработать:")
+    print("1 — JSON")
+    print("2 — CSV")
+    print("3 — Excel (XLSX)")
     logger.info("Запуск программы работы с банковскими транзакциями")
 
     # 1) Источник данных
-    choice = input("Выберите источник: 1n=JSON, 2=CSV, 3=XLSX: ").strip()
+
     handlers = {
         "1": load_json_data,
         "2": read_csv_file,
         "3": read_excel_file,
     }
-    if choice not in handlers:
-        logger.error("Неверный выбор источника: %s", choice)
-        sys.exit(1)
+    while True:
+        choice = input("Ваш выбор (1/2/3): ").strip()
+        if choice in handlers:
+            break
+        print("Неверный выбор. Пожалуйста, введите 1, 2 или 3.")
 
     path = input("Введите путь к файлу: ").strip()
+    logger.info("Выбран формат %s, путь: %s", choice, path)
+
     data: List[Dict[str, Any]] = handlers[choice](path)
     logger.info("Загружено %d операций", len(data))
+
+    try:
+        operations: List[Dict[str, Any]] = handlers[choice](path)
+    except Exception as e:
+        logger.exception("Ошибка при чтении файла: %s", e)
+        print("Ошибка при чтении файла. Проверьте путь и формат.")
+        return
+
+    logger.info("Загружено %d операций", len(operations))
+    data = operations
 
     # 2) Фильтрация по статусу
     while True:
@@ -76,6 +94,7 @@ def main() -> None:
             data = filter_by_state(data, status)
             logger.info("Отфильтровано по статусу %s: %d операций", status, len(data))
             break
+        print("Неверный статус. Попробуйте ещё раз.")
         logger.warning("Неверный статус: %s", status)
 
     # 3) Сортировка по дате
@@ -87,7 +106,7 @@ def main() -> None:
 
     # 4) Фильтр по валюте
     if input("Только рублевые? Да/Нет: ").strip().lower() == "да":
-        data = filter_by_currency(data, "руб.")
+        data = list(filter_by_currency(data, "руб."))
         logger.info("Оставлены рублевые: %d операций", len(data))
 
     # 5) Поиск по описанию (реgex)
@@ -104,6 +123,7 @@ def main() -> None:
     # 7) Вывод результатов
     if not data:
         logger.info("Ни одной операции не нашлось.")
+        print("Ни одной операции не найдено по заданным фильтрам.")
         return
 
     logger.info("Итоговый список операций (%d):", len(data))
