@@ -1,12 +1,13 @@
 import os
+from typing import Any
+
 import requests
 from dotenv import load_dotenv
-from typing import Dict, Union
 
 load_dotenv()
 
 
-def convert_transaction_to_rub(transaction: dict) -> float:
+def convert_transaction_to_rub(transaction: dict[str, Any]) -> float:
     """
     Конвертирует сумму транзакции в рубли, используя внешний API.
     Использует endpoint 'convert' вместо 'latest' для прямой конвертации.
@@ -22,29 +23,28 @@ def convert_transaction_to_rub(transaction: dict) -> float:
         RuntimeError: При ошибках API или отсутствии ключа
     """
     # Извлекаем данные из транзакции
-    operation_amount = transaction['operationAmount']
-    amount = operation_amount['amount']
-    currency = operation_amount['currency']['code']
+    operation_amount = transaction["operationAmount"]
+    amount = operation_amount["amount"]
+    currency = operation_amount["currency"]["code"]
 
     # Для рублевых транзакций конвертация не нужна
-    if currency == 'RUB':
+    if currency == "RUB":
         return float(amount)
 
     # Проверяем поддерживаемые валюты
-    if currency not in ('USD', 'EUR'):
+    if currency not in ("USD", "EUR"):
         raise ValueError(f"Неподдерживаемая валюта: {currency}")
 
     # Получаем API ключ из переменных окружения
-    api_key = os.getenv('API_KEY_EXCHANGERATES')
+    api_key = os.getenv("API_KEY_EXCHANGERATES")
     if not api_key:
         raise RuntimeError("API ключ для конвертации валют не найден")
 
     try:
         # Используем endpoint 'convert' для прямой конвертации
         response = requests.get(
-            f"https://api.apilayer.com/exchangerates_data/convert?"
-            f"to=RUB&from={currency}&amount={amount}",
-            headers={'apikey': api_key}
+            f"https://api.apilayer.com/exchangerates_data/convert?" f"to=RUB&from={currency}&amount={amount}",
+            headers={"apikey": api_key},
         )
 
         # Проверяем статус ответа
@@ -52,10 +52,10 @@ def convert_transaction_to_rub(transaction: dict) -> float:
 
         # Извлекаем результат конвертации
         result = response.json()
-        if not result.get('success', False):
+        if not result.get("success", False):
             raise RuntimeError(f"API error: {result.get('error', {}).get('info', 'Unknown error')}")
 
-        return float(result['result'])
+        return float(result["result"])
 
     except requests.exceptions.RequestException as e:
         raise RuntimeError(f"Ошибка при обращении к API: {str(e)}") from e

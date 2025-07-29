@@ -1,6 +1,7 @@
+import argparse
 import subprocess
 import sys
-import argparse
+
 
 def run(cmd):
     print(f"🔧 Выполняю: {cmd}")
@@ -9,6 +10,7 @@ def run(cmd):
         print(f"❌ Ошибка при выполнении: {cmd}")
         sys.exit(result.returncode)
 
+
 def lint_directory(path="src"):
     print(f"🔍 Запускаю линтинг для папки: {path}")
     run(f"poetry run black {path}/")
@@ -16,6 +18,7 @@ def lint_directory(path="src"):
     run(f"poetry run flake8 {path}/")
     run(f"poetry run mypy {path}/")
     print("✅ Линтинг успешно завершён!")
+
 
 def main():
     parser = argparse.ArgumentParser(description="Запуск линтеров для указанной папки")
@@ -27,6 +30,7 @@ def main():
     )
     args = parser.parse_args()
     lint_directory(args.path)
+
 
 if __name__ == "__main__":
     main()

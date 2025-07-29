@@ -1,7 +1,7 @@
 # src/decorators.py
-from datetime import datetime
-from typing import Callable, Any, Optional, TextIO
 import functools
+from datetime import datetime
+from typing import Any, Callable, Optional
 
 
 def log(filename: Optional[str] = None) -> Callable:
