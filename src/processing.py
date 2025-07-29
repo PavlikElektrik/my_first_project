@@ -28,3 +28,25 @@ def sort_by_date(operations: List[Dict[str, Any]], reverse: bool = True) -> List
         return (year, month, day)
 
     return sorted(operations, key=parse_date, reverse=reverse)
+
+
+def format_operation(op: Dict[str, Any]) -> str:
+    """
+    Возвращает многострочный текст с деталями одной операции:
+    Дата, описание, счета/карты, сумма и валюта.
+    """
+    date = op.get("date", "—")
+    desc = op.get("description", "—")
+    src = op.get("from", "")
+    dst = op.get("to", "")
+    amt = op.get("amount", "")
+    cur = op.get("currency", "")
+
+    lines = [
+        f"{date}  {desc}",
+    ]
+    if src or dst:
+        lines.append(f"{src} -> {dst}")
+    if amt:
+        lines.append(f"Сумма: {amt} {cur}".strip())
+    return "\n".join(lines)

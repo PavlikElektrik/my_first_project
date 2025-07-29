@@ -22,12 +22,7 @@ def lint_directory(path="src"):
 
 def main():
     parser = argparse.ArgumentParser(description="Запуск линтеров для указанной папки")
-    parser.add_argument(
-        "--path",
-        type=str,
-        default="src",
-        help="Целевая папка для линтинга (по умолчанию: src)"
-    )
+    parser.add_argument("--path", type=str, default="src", help="Целевая папка для линтинга (по умолчанию: src)")
     args = parser.parse_args()
     lint_directory(args.path)
 
